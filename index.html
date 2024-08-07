@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=" rel="icon" type="image/x-icon"/>
+    <title>&lrm;</title>
+    <style>
+        body {
+            display: flex; flex-flow: column; justify-content: center; align-items: center;
+            height: 100vh; margin: 0;
+            color: white; background: #000;
+            cursor: not-allowed; font-family: serif }
+
+        button {
+            font-family: serif; padding: 2pt 8pt; font-size: 10pt;
+            border: outset 2px #fff; color: #000; border-radius: 0;
+            cursor: help }
+
+        button:hover {
+            border: inset 2px #fff;
+            animation: jump 1s infinite }
+
+        @keyframes jump {
+            0% { transform: translateY(-1px); }
+            50% { transform: translateY(-1px); }
+            51% { transform: translateY(1px); }
+            100% { transform: translateY(1px); } }
+    </style>
+</head><body>
+    <p><h1>ghost frequency.</h1>18.98hz. use headphones for better experiences.<br>don"t know what this is? google "infrasound" for more info.<br><br>made with &lt;3 by 182exe.</p>
+    <button id="toggleButton">Play</button>
+    <script>
+        let audioContext;
+        let oscillator;
+        let gainNode;
+        let hiddenCursor;
+
+        function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            oscillator = audioContext.createOscillator();
+            gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.setValueAtTime(18.98, audioContext.currentTime);
+        }
+
+        function toggleTone() {
+            if (!audioContext) initAudio();
+
+            oscillator.start();
+            document.getElementById("toggleButton").remove();
+            fx.destroy();
+            hiddenCursor = true;
+            window.blur();
+            document.body.style.cursor = "none";
+        }
+
+        window.addEventListener("beforeunload", (e) => {
+            e.preventDefault();
+            e.returnValue = "";
+            
+            gainNode.gain.setTargetAtTime(0, audioContext.currentTime - 0.25, .025);
+            
+        });
+
+        document.getElementById("toggleButton").addEventListener("click", toggleTone);
+
+        document.addEventListener("mousemove", function(event) {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+            const dx = mouseX - centerX;
+            const dy = mouseY - centerY;
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            let cursorClass;
+            if (angle >= -22.5 && angle < 22.5) {
+                cursorClass = "e-resize";
+            } else if (angle >= 22.5 && angle < 67.5) {
+                cursorClass = "se-resize";
+            } else if (angle >= 67.5 && angle < 112.5) {
+                cursorClass = "n-resize";
+            } else if (angle >= 112.5 && angle < 157.5) {
+                cursorClass = "sw-resize";
+            } else if (angle >= 157.5 || angle < -157.5) {
+                cursorClass = "w-resize";
+            } else if (angle >= -157.5 && angle < -112.5) {
+                cursorClass = "nw-resize";
+            } else if (angle >= -112.5 && angle < -67.5) {
+                cursorClass = "s-resize";
+            } else if (angle >= -67.5 && angle < -22.5) {
+                cursorClass = "ne-resize";
+            }
+
+            if (hiddenCursor) { cursorClass = "none"; };
+            document.body.style.cursor = cursorClass;
+        });
+
+        var fx = fairyDustCursor();
+        
+        // from https://github.com/tholman/cursor-effects/blob/master/src/fairyDustCursor.js
+        function fairyDustCursor(t){let e=t&&t.colors||["#FFFFFF","#FF0000"],i=t&&t.element,n=i||document.body,o=window.innerWidth,h=window.innerHeight;const s={x:o/2,y:o/2},a={x:o/2,y:o/2},c=[],l=[];let d,r,u;const f=window.matchMedia("(prefers-reduced-motion: reduce)");function m(){if(f.matches)return!1;d=document.createElement("canvas"),r=d.getContext("2d"),d.style.top="0px",d.style.left="0px",d.style.pointerEvents="none",i?(d.style.position="absolute",n.appendChild(d),d.width=n.clientWidth,d.height=n.clientHeight):(d.style.position="fixed",n.appendChild(d),d.width=o,d.height=h),r.font="21px serif",r.textBaseline="middle",r.textAlign="center",e.forEach((t=>{let e=r.measureText("+"),i=document.createElement("canvas"),n=i.getContext("2d");i.width=e.width,i.height=e.actualBoundingBoxAscent+e.actualBoundingBoxDescent,n.fillStyle=t,n.textAlign="center",n.font="21px serif",n.textBaseline="middle",n.fillText("+",i.width/2,e.actualBoundingBoxAscent),l.push(i)})),n.addEventListener("mousemove",x),n.addEventListener("touchmove",v,{passive:!0}),n.addEventListener("touchstart",v,{passive:!0}),window.addEventListener("resize",p),y()}function p(t){o=window.innerWidth,h=window.innerHeight,i?(d.width=n.clientWidth,d.height=n.clientHeight):(d.width=o,d.height=h)}function v(t){if(t.touches.length>0)for(let e=0;e<t.touches.length;e++)g(t.touches[e].clientX,t.touches[e].clientY,l[Math.floor(Math.random()*l.length)])}function x(t){window.requestAnimationFrame((()=>{if(i){const e=n.getBoundingClientRect();s.x=t.clientX-e.left,s.y=t.clientY-e.top}else s.x=t.clientX,s.y=t.clientY;Math.hypot(s.x-a.x,s.y-a.y)>20&&(g(s.x,s.y,l[Math.floor(Math.random()*e.length)]),a.x=s.x,a.y=s.y)}))}function g(t,e,i){c.push(new E(t,e,i))}function y(){!function(){if(0!=c.length){r.clearRect(0,0,o,h);for(let t=0;t<c.length;t++)c[t].update(r);for(let t=c.length-1;t>=0;t--)c[t].lifeSpan<0&&c.splice(t,1);0==c.length&&r.clearRect(0,0,o,h)}}(),u=requestAnimationFrame(y)}function w(){d.remove(),cancelAnimationFrame(u),n.removeEventListener("mousemove",x),n.removeEventListener("touchmove",v),n.removeEventListener("touchstart",v),window.addEventListener("resize",p)}function E(t,e,i){const n=Math.floor(30*Math.random()+60);this.initialLifeSpan=n,this.lifeSpan=n,this.velocity={x:(Math.random()<.5?-.5:.5)*(Math.random()/2),y:1*Math.random()},this.position={x:t,y:e},this.canv=i,this.update=function(t){this.position.x+=this.velocity.x,this.position.y+=this.velocity.y,this.lifeSpan--,this.velocity.y+=.04;const e=Math.max(this.lifeSpan/this.initialLifeSpan,0);t.drawImage(this.canv,this.position.x-this.canv.width/2*e,this.position.y-this.canv.height/2,this.canv.width*e,this.canv.height*e)}}return f.onchange=()=>{f.matches?w():m()},m(),{destroy:w}}
+    </script>
+</body></html>
